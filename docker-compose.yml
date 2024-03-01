@@ -1,0 +1,11 @@
+version: "3"
+services:
+  live-stream-server:
+    container_name: live-stream-server
+    build: .
+    ports:
+      - 8000:8000
+    volumes:
+      - ./config:/config
+      - ./runtime:/runtime
+    restart: always
