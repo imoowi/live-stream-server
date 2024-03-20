@@ -10,6 +10,7 @@ import (
 
 	"github.com/imoowi/comer/utils/response"
 	"github.com/imoowi/live-stream-server/internal/global"
+	"github.com/imoowi/live-stream-server/internal/services"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -26,9 +27,9 @@ func CasbinMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// userId := c.GetUint(`uid`)
-		// roleIds := services.User.UserRoleIds(c, userId)
-		var roleIds []uint
+		userId := c.GetUint(`uid`)
+		roleIds := services.User.UserRoleIds(c, userId)
+		// var roleIds []uint
 		if len(roleIds) <= 0 {
 			response.Error(`need give role ...`, http.StatusUnauthorized, c)
 			c.Abort()
