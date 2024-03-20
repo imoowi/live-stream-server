@@ -5,8 +5,9 @@ Copyright © 2023 jun<simpleyuan@gmail.com>
 package repos
 
 import (
-	"github.com/imoowi/live-stream-server/internal/global"
 	"github.com/imoowi/comer/interfaces/impl"
+	"github.com/imoowi/live-stream-server/internal/global"
+	"github.com/imoowi/live-stream-server/internal/models"
 )
 
 var Event *EventRepo
@@ -16,7 +17,7 @@ type EventRepo struct {
 }
 
 func NewEventRepo() {
-	db:=global.MysqlDb
+	db := global.MysqlDb
 	Event = &EventRepo{
 		Repo: *impl.NewRepo(db),
 	}
@@ -24,4 +25,8 @@ func NewEventRepo() {
 
 func init() {
 	RegisterRepos(NewEventRepo)
+}
+
+func (m *EventRepo) Status() any {
+	return models.EventStatusMap
 }

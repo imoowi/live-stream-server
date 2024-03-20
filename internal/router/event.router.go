@@ -6,8 +6,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/imoowi/live-stream-server/internal/middlewares"
 	"github.com/imoowi/live-stream-server/internal/controllers"
+	"github.com/imoowi/live-stream-server/internal/middlewares"
 )
 
 func init() {
@@ -21,10 +21,11 @@ func EventRouters(e *gin.Engine) {
 	api.Use(middlewares.UserLogMiddleware())
 	events := api.Group("/events")
 	{
-		events.GET("", controllers.EventPageList) //分页
-		events.GET("/:id", controllers.EventOne) //一个
-		events.POST("", controllers.EventAdd) //新增
+		events.GET("", controllers.EventPageList)   //分页
+		events.GET("/:id", controllers.EventOne)    //一个
+		events.POST("", controllers.EventAdd)       //新增
 		events.PUT("/:id", controllers.EventUpdate) //更新
 		events.DELETE("/:id", controllers.EventDel) //软删除
 	}
+	api.GET(`event/status`, controllers.EventStatus)
 }

@@ -1,4 +1,7 @@
 version: "3"
+networks:
+  live-stream:
+    driver: bridge
 services:
   live-stream-server:
     container_name: live-stream-server
@@ -9,3 +12,20 @@ services:
       - ./config:/config
       - ./runtime:/runtime
     restart: always
+    networks:
+      - live-stream
+  srs:
+    container_name: srs
+    image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs:4
+    environment:
+      - CANDIDATE=8.140.181.111
+    ports:
+      - 1935:1935
+      - 1985:1985
+      - 8080:8080
+    volumes:
+      - ./srs/conf:/usr/local/srs/conf
+      - ./srs/html:/usr/local/srs/ogjs/nginx/html
+    restart: always
+    networks:
+      - live-stream

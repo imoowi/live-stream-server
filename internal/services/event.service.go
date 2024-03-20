@@ -5,8 +5,8 @@ Copyright © 2023 jun<simpleyuan@gmail.com>
 package services
 
 import (
-	"github.com/imoowi/comer/interfaces/impl"
 	"github.com/imoowi/comer/interfaces"
+	"github.com/imoowi/comer/interfaces/impl"
 	"github.com/imoowi/live-stream-server/internal/models"
 	"github.com/imoowi/live-stream-server/internal/repos"
 )
@@ -29,4 +29,8 @@ func init() {
 		var mt interfaces.IModel = &models.Event{}
 		Event.MT = &mt
 	})
+}
+
+func (s *EventService) Status() any {
+	return repos.Event.Status()
 }
