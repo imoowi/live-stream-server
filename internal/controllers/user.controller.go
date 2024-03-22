@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/imoowi/comer/interfaces"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/imoowi/comer/interfaces"
 	"github.com/imoowi/comer/utils/response"
 	"github.com/imoowi/live-stream-server/internal/models"
 	"github.com/imoowi/live-stream-server/internal/services"
@@ -19,8 +19,7 @@ func UserPageList(c *gin.Context) {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}
-	var mt interfaces.IModel = &models.User{}
-	res, err := services.User.PageList(c, &filter, &mt)
+	res, err := services.User.PageList(c, &filter)
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
@@ -31,8 +30,7 @@ func UserPageList(c *gin.Context) {
 func UserOne(c *gin.Context) {
 	id := c.DefaultQuery(`id`, `0`)
 	var f interfaces.IFilter = &models.UserFilter{}
-	var mt interfaces.IModel = &models.User{}
-	res, err := services.User.One(c, &f, cast.ToUint(id), &mt)
+	res, err := services.User.One(c, &f, cast.ToUint(id))
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
@@ -60,15 +58,14 @@ func UserUpdate(c *gin.Context) {
 		response.Error(`pls input id`, http.StatusBadRequest, c)
 		return
 	}
-	var addModel interfaces.IModel = &models.User{}
+	addModel := &models.User{}
 	err := c.ShouldBindBodyWith(&addModel, binding.JSON)
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}
 	var f interfaces.IFilter = &models.UserFilter{}
-	var mt interfaces.IModel = &models.User{}
-	res, err := services.User.Update(c, &f, &addModel, cast.ToUint(id), &mt)
+	res, err := services.User.Update(c, &f, addModel, cast.ToUint(id))
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
@@ -83,8 +80,7 @@ func UserDelete(c *gin.Context) {
 		return
 	}
 	var f interfaces.IFilter = &models.UserFilter{}
-	var mt interfaces.IModel = &models.User{}
-	res, err := services.User.Delete(c, &f, cast.ToUint(id), &mt)
+	res, err := services.User.Delete(c, &f, cast.ToUint(id))
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return

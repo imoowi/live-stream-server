@@ -8,21 +8,21 @@ import (
 	"errors"
 
 	"github.com/gin-gonic/gin"
-	"github.com/imoowi/live-stream-server/internal/models"
- 	"github.com/imoowi/comer/interfaces/impl"
+	"github.com/imoowi/comer/interfaces/impl"
 	"github.com/imoowi/live-stream-server/internal/global"
+	"github.com/imoowi/live-stream-server/internal/models"
 )
 
 var UserRole *UserRoleRepo
 
 type UserRoleRepo struct {
-	impl.Repo
+	impl.Repo[*models.UserRole]
 }
 
 func NewUserRoleRepo() {
-	db:=global.MysqlDb
+	db := global.MysqlDb
 	UserRole = &UserRoleRepo{
-		Repo: *impl.NewRepo(db),
+		Repo: *impl.NewRepo[*models.UserRole](db),
 	}
 }
 

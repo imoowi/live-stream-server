@@ -8,6 +8,8 @@ import (
 	"errors"
 
 	"github.com/gin-gonic/gin"
+	"github.com/imoowi/comer/interfaces"
+	"github.com/imoowi/comer/interfaces/impl"
 	"github.com/imoowi/comer/utils/maker"
 	"github.com/imoowi/comer/utils/password"
 	"github.com/imoowi/live-stream-server/internal/global"
@@ -15,26 +17,22 @@ import (
 	"github.com/imoowi/live-stream-server/internal/models"
 	"github.com/imoowi/live-stream-server/internal/repos"
 	"github.com/spf13/cast"
-	"github.com/imoowi/comer/interfaces"
-	"github.com/imoowi/comer/interfaces/impl"
 )
 
 var User *UserService
 
 type UserService struct {
-	impl.Service
+	impl.Service[*models.User]
 }
 
 func NewUserService(r *repos.UserRepo) *UserService {
 	return &UserService{
-		Service: *impl.NewService(r),
+		Service: *impl.NewService[*models.User](r),
 	}
 }
 func init() {
 	RegisterServices(func() {
 		User = NewUserService(repos.User)
-		var mt interfaces.IModel = &models.User{}
-		User.MT = &mt
 	})
 }
 func (s *UserService) OneByUsername(c *gin.Context, username string) (model *models.User, err error) {
@@ -42,11 +40,10 @@ func (s *UserService) OneByUsername(c *gin.Context, username string) (model *mod
 }
 func (s *UserService) Add(c *gin.Context, _model *models.UserAdd) (newId uint, err error) {
 	var f interfaces.IFilter = &models.UserFilter{}
-	_admin, _ := s.One(c, &f, c.GetUint(`uid`), s.MT)
+	admin, _ := s.One(c, &f, c.GetUint(`uid`))
 	// 角色是否存在？
-	var mt interfaces.IModel = &models.Role{}
 	var fr interfaces.IFilter = &models.RoleFilter{}
-	role, _ := Role.One(c, &fr, _model.RoleId, &mt)
+	role, _ := Role.One(c, &fr, _model.RoleId)
 	if role == nil || (*role).GetID() <= 0 {
 		newId = 0
 		err = errors.New(`角色不存在`)
@@ -68,21 +65,18 @@ func (s *UserService) Add(c *gin.Context, _model *models.UserAdd) (newId uint, e
 			Salt:   salt,
 		},
 	}
-	var newUserModel interfaces.IModel = newUser
-	newId, err = s.Service.Add(c, &f, &newUserModel, s.MT)
+	newId, err = s.Service.Add(c, &f, newUser)
 	if newId > 0 {
 		// 插入用户和角色关系
-		var userrole interfaces.IModel = &models.UserRole{UserID: newId, RoleId: _model.RoleId}
+		userrole := &models.UserRole{UserID: newId, RoleId: _model.RoleId}
 		var fur interfaces.IFilter = &models.UserRoleFilter{}
-		var urmt interfaces.IModel = &models.UserRole{}
-		UserRole.Add(c, &fur, &userrole, &urmt)
+		UserRole.Add(c, &fur, userrole)
 
 		//*
 		go func(c *gin.Context, _model *models.UserAdd, newId uint) {
 
-			admin := (*_admin).(*models.User)
 			if admin.GetID() > 0 {
-				var userlog interfaces.IModel = &models.UserLog{
+				userlog := &models.UserLog{
 					UserID:     admin.GetID(),
 					LogType:    global.USER_LOG_TYPE_ADD,
 					ResType:    global.RES_TYPE_USER,
@@ -90,8 +84,7 @@ func (s *UserService) Add(c *gin.Context, _model *models.UserAdd) (newId uint, e
 					IP:         c.ClientIP(),
 				}
 				var ful interfaces.IFilter = &models.UserLogFilter{}
-				var ulmt interfaces.IModel = &models.UserLog{}
-				UserLog.Add(c, &ful, &userlog, &ulmt)
+				UserLog.Add(c, &ful, userlog)
 			}
 		}(c, _model, newId)
 		//*/
@@ -107,11 +100,10 @@ func (s *UserService) Logout(c *gin.Context, token string) bool {
 	// err := global.Redis.SAdd(c, JwtTokenBlackListSetKey, token).Err()
 	var err error
 	var fu interfaces.IFilter = &models.UserFilter{}
-	_admin, _ := repos.User.One(c, &fu, c.GetUint(`uid`), s.MT)
-	if (*_admin).GetID() > 0 {
-		admin := (*_admin).(*models.User)
+	admin, _ := repos.User.One(c, &fu, c.GetUint(`uid`))
+	if (*admin).GetID() > 0 {
 		go func(c *gin.Context, admin *models.User) {
-			var userlog interfaces.IModel = &models.UserLog{
+			userlog := &models.UserLog{
 				UserID:     admin.ID,
 				LogType:    global.USER_LOG_TYPE_USER_LOGOUT,
 				ResType:    global.RES_TYPE_USER,
@@ -119,23 +111,21 @@ func (s *UserService) Logout(c *gin.Context, token string) bool {
 				IP:         c.ClientIP(),
 			}
 			var ful interfaces.IFilter = &models.UserLogFilter{}
-			var umt interfaces.IModel = &models.UserLog{}
-			UserLog.Add(c, &ful, &userlog, &umt)
-		}(c, admin)
+			UserLog.Add(c, &ful, userlog)
+		}(c, *admin)
 	}
 	return err == nil
 }
 
 func (s *UserService) ChgPwd(c *gin.Context, userChgPwd *models.UserChgPwd) (newToken string, err error) {
 	var fu interfaces.IFilter = &models.UserFilter{}
-	_admin, _ := repos.User.One(c, &fu, c.GetUint(`uid`), s.MT)
+	admin, _ := repos.User.One(c, &fu, c.GetUint(`uid`))
 	ok, err := repos.User.ChgPwd(c, userChgPwd)
 	if err == nil && ok {
-		if (*_admin).GetID() > 0 {
-			admin := (*_admin).(*models.User)
-			newToken, _ = token.GenToken(admin.Username, admin.ID)
+		if (*admin).GetID() > 0 {
+			newToken, _ = token.GenToken((*admin).Username, (*admin).ID)
 			go func(c *gin.Context, admin *models.User) {
-				var userlog interfaces.IModel = &models.UserLog{
+				userlog := &models.UserLog{
 					UserID:     admin.ID,
 					LogType:    global.USER_LOG_TYPE_USER_CHGPWD,
 					ResType:    global.RES_TYPE_USER,
@@ -143,9 +133,8 @@ func (s *UserService) ChgPwd(c *gin.Context, userChgPwd *models.UserChgPwd) (new
 					IP:         c.ClientIP(),
 				}
 				var ful interfaces.IFilter = &models.UserLogFilter{}
-				var ulmt interfaces.IModel = &models.UserLog{}
-				UserLog.Add(c, &ful, &userlog, &ulmt)
-			}(c, admin)
+				UserLog.Add(c, &ful, userlog)
+			}(c, *admin)
 		}
 	}
 	return
@@ -168,12 +157,10 @@ func (s *UserService) IsSuper(c *gin.Context, userId uint) bool {
 	}
 	for _, v := range userRoles {
 		var fr interfaces.IFilter = &models.RoleFilter{}
-		var mtr interfaces.IModel = &models.Role{}
-		_role, err := Role.One(c, &fr, v.RoleId, &mtr)
+		role, err := Role.One(c, &fr, v.RoleId)
 		if err != nil {
 			continue
 		}
-		role := (*_role).(*models.Role)
 		if role.Level == models.ROLE_LEVEL_SUPER {
 			return true
 		}
@@ -200,11 +187,10 @@ func (s *UserService) UserRolesByUid(c *gin.Context, userId uint) (roles []*mode
 	}
 	for _, v := range userRoles {
 		var fr interfaces.IFilter = &models.RoleFilter{}
-		_role, err := Role.One(c, &fr, v.RoleId, s.MT)
+		role, err := Role.One(c, &fr, v.RoleId)
 		if err != nil {
 			continue
 		}
-		role := (*_role).(*models.Role)
 		roles = append(roles, role)
 	}
 	return

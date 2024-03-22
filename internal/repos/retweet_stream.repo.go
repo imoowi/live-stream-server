@@ -10,19 +10,19 @@ import (
 	"github.com/imoowi/live-stream-server/internal/models"
 )
 
-var Role *RoleRepo
+var RetweetStream *RetweetStreamRepo
 
-type RoleRepo struct {
-	impl.Repo[*models.Role]
+type RetweetStreamRepo struct {
+	impl.Repo[*models.RetweetStream]
 }
 
-func NewRoleRepo() {
+func NewRetweetStreamRepo() {
 	db := global.MysqlDb
-	Role = &RoleRepo{
-		Repo: *impl.NewRepo[*models.Role](db),
+	RetweetStream = &RetweetStreamRepo{
+		Repo: *impl.NewRepo[*models.RetweetStream](db),
 	}
 }
 
 func init() {
-	RegisterRepos(NewRoleRepo)
+	RegisterRepos(NewRetweetStreamRepo)
 }

@@ -6,29 +6,26 @@ package services
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/imoowi/comer/interfaces/impl"
 	"github.com/imoowi/live-stream-server/internal/models"
 	"github.com/imoowi/live-stream-server/internal/repos"
-	"github.com/imoowi/comer/interfaces"
-	"github.com/imoowi/comer/interfaces/impl"
 )
 
 var UserRole *UserRoleService
 
 type UserRoleService struct {
-	impl.Service
+	impl.Service[*models.UserRole]
 }
 
 func NewUserRoleService(r *repos.UserRoleRepo) *UserRoleService {
 	return &UserRoleService{
-		Service: *impl.NewService(r),
+		Service: *impl.NewService[*models.UserRole](r),
 	}
 }
 
 func init() {
 	RegisterServices(func() {
 		UserRole = NewUserRoleService(repos.UserRole)
-		var mt interfaces.IModel = &models.UserRole{}
-		UserRole.MT = &mt
 	})
 }
 

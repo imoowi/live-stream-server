@@ -13,13 +13,13 @@ import (
 var Event *EventRepo
 
 type EventRepo struct {
-	impl.Repo
+	impl.Repo[*models.Event]
 }
 
 func NewEventRepo() {
 	db := global.MysqlDb
 	Event = &EventRepo{
-		Repo: *impl.NewRepo(db),
+		Repo: *impl.NewRepo[*models.Event](db),
 	}
 }
 

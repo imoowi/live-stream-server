@@ -8,25 +8,24 @@ import (
 	"errors"
 
 	"github.com/gin-gonic/gin"
-	"github.com/imoowi/comer/utils/maker"
-	"github.com/imoowi/comer/utils/password"
-	"github.com/imoowi/live-stream-server/internal/models"
-	"github.com/imoowi/live-stream-server/internal/global"
 	"github.com/imoowi/comer/interfaces"
 	"github.com/imoowi/comer/interfaces/impl"
+	"github.com/imoowi/comer/utils/maker"
+	"github.com/imoowi/comer/utils/password"
+	"github.com/imoowi/live-stream-server/internal/global"
+	"github.com/imoowi/live-stream-server/internal/models"
 )
-
 
 var User *UserRepo
 
 type UserRepo struct {
-	impl.Repo
+	impl.Repo[*models.User]
 }
 
 func NewUserRepo() {
-	db:=global.MysqlDb
+	db := global.MysqlDb
 	User = &UserRepo{
-		Repo: *impl.NewRepo(db),
+		Repo: *impl.NewRepo[*models.User](db),
 	}
 }
 func init() {
@@ -54,14 +53,12 @@ func (r *UserRepo) Login(c *gin.Context, login *models.UserLogin) (*models.User,
 }
 
 func (r *UserRepo) ChgPwd(c *gin.Context, userChgPwd *models.UserChgPwd) (ok bool, err error) {
-	var mt interfaces.IModel = &models.User{}
 	var q interfaces.IFilter = &models.UserFilter{}
-	_user, err := r.One(c, &q, userChgPwd.UserId, &mt)
+	user, err := r.One(c, &q, userChgPwd.UserId)
 	if err != nil {
 		return
 	}
-	user := (*_user).(*models.User)
-	if user.GetID() <= 0 {
+	if (*user).GetID() <= 0 {
 		err = errors.New(`用户不存在`)
 		return
 	}
@@ -69,12 +66,12 @@ func (r *UserRepo) ChgPwd(c *gin.Context, userChgPwd *models.UserChgPwd) (ok boo
 		err = errors.New(`两次输入的新密码不一致`)
 		return
 	}
-	if user.Passwd != password.GeneratePassword(userChgPwd.OriginPwd+user.Salt) {
+	if (*user).Passwd != password.GeneratePassword(userChgPwd.OriginPwd+(*user).Salt) {
 		err = errors.New(`原始密码错误`)
 		return
 	}
-	user.Salt = maker.MakeRandStr(6)
-	user.Passwd = password.GeneratePassword(userChgPwd.NewPwd + user.Salt)
+	(*user).Salt = maker.MakeRandStr(6)
+	(*user).Passwd = password.GeneratePassword(userChgPwd.NewPwd + (*user).Salt)
 	db := r.DB.Client
 	err = db.Omit(`created_at`).Save(&user).Error
 	if err != nil {

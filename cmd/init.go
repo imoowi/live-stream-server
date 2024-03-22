@@ -9,11 +9,11 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/imoowi/comer/interfaces"
 	"github.com/imoowi/live-stream-server/internal/global"
 	"github.com/imoowi/live-stream-server/internal/models"
 	"github.com/imoowi/live-stream-server/internal/repos"
 	"github.com/imoowi/live-stream-server/internal/services"
-	"github.com/imoowi/comer/interfaces"
 	"github.com/spf13/cobra"
 )
 
@@ -61,11 +61,10 @@ func initDb() {
 	superRoleName := `超级管理员`
 	var fr interfaces.IFilter = &models.RoleFilter{}
 	var superRoleId uint
-	var mt interfaces.IModel = &models.Role{}
-	_role, err := services.Role.OneByName(c, &fr, superRoleName, &mt)
+	_role, err := services.Role.OneByName(c, &fr, superRoleName)
 	if err != nil || (*_role).GetID() <= 0 {
-		var role interfaces.IModel = &models.Role{Name: `超级管理员`, Level: models.ROLE_LEVEL_SUPER}
-		roleId, err := services.Role.Add(c, &fr, &role, &mt)
+		role := &models.Role{Name: `超级管理员`, Level: models.ROLE_LEVEL_SUPER}
+		roleId, err := services.Role.Add(c, &fr, role)
 		if err != nil {
 			log.Println(err.Error())
 			return

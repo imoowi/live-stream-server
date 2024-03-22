@@ -5,20 +5,21 @@ Copyright © 2023 jun<simpleyuan@gmail.com>
 package repos
 
 import (
-	"github.com/imoowi/live-stream-server/internal/global"
 	"github.com/imoowi/comer/interfaces/impl"
+	"github.com/imoowi/live-stream-server/internal/global"
+	"github.com/imoowi/live-stream-server/internal/models"
 )
 
 var SrsHook *SrsHookRepo
 
 type SrsHookRepo struct {
-	impl.Repo
+	impl.Repo[*models.SrsHook]
 }
 
 func NewSrsHookRepo() {
-	db:=global.MysqlDb
+	db := global.MysqlDb
 	SrsHook = &SrsHookRepo{
-		Repo: *impl.NewRepo(db),
+		Repo: *impl.NewRepo[*models.SrsHook](db),
 	}
 }
 

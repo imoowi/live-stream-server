@@ -10,24 +10,20 @@ import (
 	"github.com/imoowi/live-stream-server/internal/repos"
 )
 
-var Event *EventService
+var RetweetStream *RetweetStreamService
 
-type EventService struct {
-	impl.Service[*models.Event]
+type RetweetStreamService struct {
+	impl.Service[*models.RetweetStream]
 }
 
-func NewEventService(r *repos.EventRepo) *EventService {
-	return &EventService{
-		Service: *impl.NewService[*models.Event](r),
+func NewRetweetStreamService(r *repos.RetweetStreamRepo) *RetweetStreamService {
+	return &RetweetStreamService{
+		Service: *impl.NewService[*models.RetweetStream](r),
 	}
 }
 
 func init() {
 	RegisterServices(func() {
-		Event = NewEventService(repos.Event)
+		RetweetStream = NewRetweetStreamService(repos.RetweetStream)
 	})
-}
-
-func (s *EventService) Status() any {
-	return repos.Event.Status()
 }

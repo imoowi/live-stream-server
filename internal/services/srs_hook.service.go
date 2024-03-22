@@ -6,7 +6,6 @@ package services
 
 import (
 	"github.com/imoowi/comer/interfaces/impl"
-	"github.com/imoowi/comer/interfaces"
 	"github.com/imoowi/live-stream-server/internal/models"
 	"github.com/imoowi/live-stream-server/internal/repos"
 )
@@ -14,19 +13,17 @@ import (
 var SrsHook *SrsHookService
 
 type SrsHookService struct {
-	impl.Service
+	impl.Service[*models.SrsHook]
 }
 
 func NewSrsHookService(r *repos.SrsHookRepo) *SrsHookService {
 	return &SrsHookService{
-		Service: *impl.NewService(r),
+		Service: *impl.NewService[*models.SrsHook](r),
 	}
 }
 
 func init() {
 	RegisterServices(func() {
 		SrsHook = NewSrsHookService(repos.SrsHook)
-		var mt interfaces.IModel = &models.SrsHook{}
-		SrsHook.MT = &mt
 	})
 }
