@@ -17,17 +17,17 @@ import (
 	"github.com/spf13/cast"
 )
 
-// @Summary	分页列表(pagelist)
-// @Tags	right
-// @Accept	application/json
-// @Produce	application/json
-// @Param	Authorization	header		string				true	"Bearer 用户令牌"
-// @Param   {object}             query                 models.RightFilter  false "query参数"
-// @Success 200                        {object} response.PageListT[models.Right] "成功"
-// @Failure 400                        "请求错误"
-// @Failure 401                        "token验证失败"
-// @Failure 500                         "内部错误"
-// @Router		/api/rights [get]
+//	@Summary	分页列表(pagelist)
+//	@Tags		right
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header		string								true	"Bearer 用户令牌"
+//	@Param		{object}		query		models.RightFilter					false	"query参数"
+//	@Success	200				{object}	response.PageListT[models.Right]	"成功"
+//	@Failure	400				"请求错误"
+//	@Failure	401				"token验证失败"
+//	@Failure	500				"内部错误"
+//	@Router		/api/rights [get]
 func RightPageList(c *gin.Context) {
 	var filter interfaces.IFilter = &models.RightFilter{}
 	err := c.ShouldBindQuery(&filter)
@@ -58,17 +58,17 @@ func RightPageList(c *gin.Context) {
 	response.OK(result,c)
 }
 
-// @Summary	详情(one)
-// @Tags		right
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string	true	"Bearer 用户令牌"
-// @Param		id				path	int		true	"id"
-// @Success	200 						{object} models.Right "成功"
-// @Failure 400                        "请求错误"
-// @Failure 401                        "token验证失败"
-// @Failure 500                         "内部错误"
-// @Router		/api/rights/{id} [get]
+//	@Summary	详情(one)
+//	@Tags		right
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header		string			true	"Bearer 用户令牌"
+//	@Param		id				path		int				true	"id"
+//	@Success	200				{object}	models.Right	"成功"
+//	@Failure	400				"请求错误"
+//	@Failure	401				"token验证失败"
+//	@Failure	500				"内部错误"
+//	@Router		/api/rights/{id} [get]
 func RightOne(c *gin.Context) {
 	id := c.Param(`id`)
 	if id == `` {
@@ -84,17 +84,17 @@ func RightOne(c *gin.Context) {
 	response.OK(one,c)
 }
 
-// @Summary	新增(add)
-// @Tags		right
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string	true	"Bearer 用户令牌"
-// @Param 		{object} body  models.Right true "body"
-// @Success	200
-// @Failure 400                        "请求错误"
-// @Failure 401                        "token验证失败"
-// @Failure 500                         "内部错误"
-// @Router		/api/rights [post]
+//	@Summary	新增(add)
+//	@Tags		right
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string			true	"Bearer 用户令牌"
+//	@Param		{object}		body	models.Right	true	"body"
+//	@Success	200
+//	@Failure	400	"请求错误"
+//	@Failure	401	"token验证失败"
+//	@Failure	500	"内部错误"
+//	@Router		/api/rights [post]
 func RightAdd(c *gin.Context) {
 	model := &models.Right{}
 	err := c.ShouldBindBodyWith(&model,binding.JSON)
@@ -110,18 +110,18 @@ func RightAdd(c *gin.Context) {
 	response.OK(newId,c)
 }
 
-// @Summary	更新(update)
-// @Tags		right
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string	true	"Bearer 用户令牌"
-// @Param		id				path	int		true	"id"
-// @Param 		{object} body  models.Right true "body"
-// @Success	200
-// @Failure 400                        "请求错误"
-// @Failure 401                        "token验证失败"
-// @Failure 500                         "内部错误"
-// @Router		/api/rights/{id} [put]
+//	@Summary	更新(update)
+//	@Tags		right
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string			true	"Bearer 用户令牌"
+//	@Param		id				path	int				true	"id"
+//	@Param		{object}		body	models.Right	true	"body"
+//	@Success	200
+//	@Failure	400	"请求错误"
+//	@Failure	401	"token验证失败"
+//	@Failure	500	"内部错误"
+//	@Router		/api/rights/{id} [put]
 func RightUpdate(c *gin.Context) {
 	id := c.Param(`id`)
 	if id == `` {
@@ -146,17 +146,17 @@ func RightUpdate(c *gin.Context) {
 	response.OK(updated,c)
 }
 
-// @Summary	删除(delete)
-// @Tags		right
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string	true	"Bearer 用户令牌"
-// @Param		id				path	int		true	"id"
-// @Success	200
-// @Failure 400                        "请求错误"
-// @Failure 401                        "token验证失败"
-// @Failure 500                         "内部错误"
-// @Router		/api/rights/{id} [delete]
+//	@Summary	删除(delete)
+//	@Tags		right
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string	true	"Bearer 用户令牌"
+//	@Param		id				path	int		true	"id"
+//	@Success	200
+//	@Failure	400	"请求错误"
+//	@Failure	401	"token验证失败"
+//	@Failure	500	"内部错误"
+//	@Router		/api/rights/{id} [delete]
 func RightDel(c *gin.Context) {
 	id := c.Param(`id`)
 	if id == `` {

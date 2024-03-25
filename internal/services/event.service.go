@@ -5,6 +5,7 @@ Copyright © 2023 jun<simpleyuan@gmail.com>
 package services
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/imoowi/comer/interfaces/impl"
 	"github.com/imoowi/live-stream-server/internal/models"
 	"github.com/imoowi/live-stream-server/internal/repos"
@@ -30,4 +31,8 @@ func init() {
 
 func (s *EventService) Status() any {
 	return repos.Event.Status()
+}
+
+func (s *EventService) Add(c *gin.Context, model *models.Event) (newId uint, err error) {
+	return repos.Event.Add(c, model)
 }

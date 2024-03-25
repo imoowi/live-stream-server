@@ -184,13 +184,11 @@ func EventDel(c *gin.Context) {
 //	@Tags		Event(直播活动)
 //	@Accept		application/json
 //	@Produce	application/json
-//	@Param		Authorization	header	string	true	"Bearer 用户令牌"
-//	@Param		id				path	int		true	"id"
 //	@Success	200
 //	@Failure	400	"请求错误"
 //	@Failure	401	"token验证失败"
 //	@Failure	500	"内部错误"
-//	@Router		/api/event/status [get]
+//	@Router		/api/event-status [get]
 func EventStatus(c *gin.Context) {
 	response.OK(services.Event.Status(), c)
 }

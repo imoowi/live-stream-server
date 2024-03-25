@@ -37,3 +37,7 @@ redis:
 cache:
   driver: redis
   prefix: "live-stream-server:cache"
+
+live:
+  rtmp: rtmp://test-rtmp.orthonline.com.cn/live
+  ffmpegpath: /usr/bin/ffmpeg

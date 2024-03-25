@@ -7,7 +7,7 @@ test:
 docker:
 	sh start_server_in_docker.sh
 swagger:
-	swag init
+	swag init --parseDependency
 migrate:
 	go run . migrate -c configs/settings-local.yml
 init:

@@ -6,9 +6,9 @@ package main
 
 import "github.com/imoowi/live-stream-server/cmd"
 
-//	@title			Comer API
-//	@version		1.0
-//	@description	This is a comer-example server.
+// @title			Live Stream Server API
+// @version		1.0
+// @description	This is a comer-example server.
 func main() {
 	cmd.Execute()
 }

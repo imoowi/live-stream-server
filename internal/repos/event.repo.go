@@ -5,9 +5,15 @@ Copyright © 2023 jun<simpleyuan@gmail.com>
 package repos
 
 import (
+	"time"
+
+	"github.com/gin-gonic/gin"
 	"github.com/imoowi/comer/interfaces/impl"
+	"github.com/imoowi/comer/utils/maker"
+	"github.com/imoowi/comer/utils/password"
 	"github.com/imoowi/live-stream-server/internal/global"
 	"github.com/imoowi/live-stream-server/internal/models"
+	"github.com/spf13/cast"
 )
 
 var Event *EventRepo
@@ -27,6 +33,25 @@ func init() {
 	RegisterRepos(NewEventRepo)
 }
 
-func (m *EventRepo) Status() any {
+func (r *EventRepo) Status() any {
 	return models.EventStatusMap
+}
+
+func (r *EventRepo) GetOneByStream(c *gin.Context, stream string) (model *models.Event, err error) {
+	db := r.DB.Client
+	err = db.Model(new(models.Event)).Where(`rtmp_push_code=?`, stream).First(&model).Error
+	return
+}
+func (r *EventRepo) ChangeStatus(c *gin.Context, status models.EventStatus, id uint) (ok bool, err error) {
+	db := r.DB.Client
+	err = db.Model(&models.Event{}).Where(`id=?`, id).Updates(map[string]any{`status`: status}).Error
+	return
+}
+func (r *EventRepo) Add(c *gin.Context, model *models.Event) (newId uint, err error) {
+	day := time.Now().Format(`2006-01-02`)
+	model.Token = password.GenerateMd5Str(cast.ToString(time.Now().UnixMicro()))
+	model.RtmpPush = global.Config.GetString(`live.rtmp`) + `/` + day + `?token=` + model.Token
+	model.RtmpPushCode = cast.ToString(c.GetUint(`uid`)) + `_` + maker.MakeRandStr(8)
+
+	return r.Repo.Add(c, model)
 }

@@ -43,6 +43,7 @@ func (r *UserRepo) Login(c *gin.Context, login *models.UserLogin) (*models.User,
 	}
 	if user.ID > 0 {
 		if user.Passwd == password.GeneratePassword(login.Passwd+user.Salt) {
+			user.Passwd = ``
 			return user, nil
 		} else {
 			return nil, errors.New(`密码错误`)

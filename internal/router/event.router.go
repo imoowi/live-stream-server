@@ -26,5 +26,5 @@ func EventRouters(e *gin.Engine) {
 		events.PUT("/:id", controllers.EventUpdate) //更新
 		events.DELETE("/:id", controllers.EventDel) //软删除
 	}
-	api.GET(`event/status`, controllers.EventStatus)
+	api.GET(`event-status`, controllers.EventStatus)
 }

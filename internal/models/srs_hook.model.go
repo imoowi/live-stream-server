@@ -8,8 +8,28 @@ import (
 	"github.com/imoowi/comer/components"
 )
 
-type SrsHookBase struct{
-	Name  string     `json:"name" form:"name" gorm:"column:name;type:varchar(30);not null;comment:名" `
+type HooksAction string
+
+const (
+	HooksActionPublish   HooksAction = `on_publish`   //推流
+	HooksActionUnPublish HooksAction = `on_unpublish` //拉流
+	HooksActionPlay      HooksAction = `on_play`      //播放
+	HooksActionStop      HooksAction = `on_stop`      //停止播放
+	HooksActionHls       HooksAction = `on_hls`       // hls
+	HooksActionHlsNotify HooksAction = `on_hls_notify`
+	HooksActionDvr       HooksAction = `on_dvr` //录像
+)
+
+type SrsHookBase struct {
+	Name     string      `json:"name" form:"name" gorm:"column:name;type:varchar(30);not null;comment:名" `
+	Action   HooksAction `json:"action" gorm:"column:action;type:varchar;size:30"`
+	App      string      `json:"app" gorm:"column:app;type:varchar;size:255"`
+	ClientId string      `json:"client_id" gorm:"column:client_id;type:varchar;size:255"`
+	Ip       string      `json:"ip" gorm:"column:ip;type:varchar;size:255"`
+	Param    string      `json:"param" gorm:"column:param;type:varchar;size:255"`
+	ServerId string      `json:"server_id" gorm:"column:server_id;type:varchar;size:255"`
+	Stream   string      `json:"stream" gorm:"column:stream;type:varchar;size:255"`
+	Vhost    string      `json:"vhost" gorm:"column:vhost;type:varchar;size:255"`
 }
 
 // SrsHook表
