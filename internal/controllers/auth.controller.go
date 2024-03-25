@@ -20,16 +20,16 @@ type LoginRes struct {
 	User  *models.User `json:"user"`
 }
 
-// @Summary	登录
-// @Tags		Auth
-// @Accept		application/json
-// @Produce	application/json
-// @Param		{object}	body	models.UserLogin	true	"登录信息"
-// @Success	200 {object}    LoginRes "请求成功"
-// @Failure	400	{object}	string	"请求错误"
-// @Failure	401	{object}	string	"token验证失败"
-// @Failure	500	{object}	string	"内部错误"
-// @Router		/api/auth-login [post]
+//	@Summary	登录
+//	@Tags		Auth
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		{object}	body		models.UserLogin	true	"登录信息"
+//	@Success	200			{object}	LoginRes			"请求成功"
+//	@Failure	400			{object}	string				"请求错误"
+//	@Failure	401			{object}	string				"token验证失败"
+//	@Failure	500			{object}	string				"内部错误"
+//	@Router		/api/auth-login [post]
 func AuthLogin(c *gin.Context) {
 	var userLogin *models.UserLogin
 	err := c.ShouldBindBodyWith(&userLogin, binding.JSON)
@@ -58,16 +58,16 @@ func AuthLogin(c *gin.Context) {
 	response.OK(loginRes, c)
 }
 
-// @Summary	退出
-// @Tags		Auth
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string	true	"Bearer 用户令牌"
-// @Success	200
-// @Failure	400	{object}	string	"请求错误"
-// @Failure	401	{object}	string	"token验证失败"
-// @Failure	500	{object}	string	"内部错误"
-// @Router		/api/auth-logout [get]
+//	@Summary	退出
+//	@Tags		Auth
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string	true	"Bearer 用户令牌"
+//	@Success	200
+//	@Failure	400	{object}	string	"请求错误"
+//	@Failure	401	{object}	string	"token验证失败"
+//	@Failure	500	{object}	string	"内部错误"
+//	@Router		/api/auth-logout [get]
 func AuthLogout(c *gin.Context) {
 	authHeader := c.Request.Header.Get("Authorization")
 	if authHeader == "" {
@@ -78,17 +78,17 @@ func AuthLogout(c *gin.Context) {
 	response.OK(ok, c)
 }
 
-// @Summary	改密
-// @Tags		Auth
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string				true	"Bearer 用户令牌"
-// @Param		{object}		body	models.UserChgPwd	true	"改密信息"
-// @Success	200
-// @Failure	400	{object}	string	"请求错误"
-// @Failure	401	{object}	string	"token验证失败"
-// @Failure	500	{object}	string	"内部错误"
-// @Router		/api/auth-chpwd [post]
+//	@Summary	改密
+//	@Tags		Auth
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string				true	"Bearer 用户令牌"
+//	@Param		{object}		body	models.UserChgPwd	true	"改密信息"
+//	@Success	200
+//	@Failure	400	{object}	string	"请求错误"
+//	@Failure	401	{object}	string	"token验证失败"
+//	@Failure	500	{object}	string	"内部错误"
+//	@Router		/api/auth-chpwd [post]
 func AuthChgPwd(c *gin.Context) {
 	var userChgPwd *models.UserChgPwd
 	err := c.ShouldBindBodyWith(&userChgPwd, binding.JSON)

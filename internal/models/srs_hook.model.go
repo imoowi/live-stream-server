@@ -23,19 +23,29 @@ const (
 type SrsHookBase struct {
 	Name     string      `json:"name" form:"name" gorm:"column:name;type:varchar(30);not null;comment:名" `
 	Action   HooksAction `json:"action" gorm:"column:action;type:varchar;size:30"`
-	App      string      `json:"app" gorm:"column:app;type:varchar;size:255"`
-	ClientId string      `json:"client_id" gorm:"column:client_id;type:varchar;size:255"`
-	Ip       string      `json:"ip" gorm:"column:ip;type:varchar;size:255"`
-	Param    string      `json:"param" gorm:"column:param;type:varchar;size:255"`
 	ServerId string      `json:"server_id" gorm:"column:server_id;type:varchar;size:255"`
+	Duration float32     `json:"duration" gorm:"column:duration;type:int;size:6"`
 	Stream   string      `json:"stream" gorm:"column:stream;type:varchar;size:255"`
 	Vhost    string      `json:"vhost" gorm:"column:vhost;type:varchar;size:255"`
+	M3u8     string      `json:"m3u8" gorm:"column:m3u8;type:varchar;size:255"`
+	M3u8Url  string      `json:"m3u8_url" gorm:"column:m3u8_url;type:varchar;size:255"`
+	App      string      `json:"app" gorm:"column:app;type:varchar;size:255"`
+	Param    string      `json:"param" gorm:"column:param;type:varchar;size:255"`
+	Cwd      string      `json:"cwd" gorm:"column:cwd;type:varchar;size:255"`
+	File     string      `json:"file" gorm:"column:file;type:varchar;size:255"`
+	ClientId string      `json:"client_id" gorm:"column:client_id;type:varchar;size:255"`
+	Ip       string      `json:"ip" gorm:"column:ip;type:varchar;size:255"`
+	Url      string      `json:"url" gorm:"column:url;type:varchar;size:255"`
+}
+type dynamicTableName struct {
+	DTableName string `gorm:"table:动态表名"`
 }
 
 // SrsHook表
 type SrsHook struct {
 	components.GormModel
 	SrsHookBase
+	dynamicTableName
 }
 
 // IModel.GetID实现
@@ -48,5 +58,11 @@ func (m *SrsHook) SetId(id uint) {
 
 // IModel.TableName实现
 func (m *SrsHook) TableName() string {
+	if m.DTableName != `` {
+		return m.DTableName
+	}
 	return `srs_hook` + `s`
+}
+func (m *SrsHook) SetTableName(table string) {
+	m.DTableName = table
 }
