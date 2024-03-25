@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/imoowi/comer/interfaces"
 	"github.com/imoowi/live-stream-server/internal/global"
 	"github.com/imoowi/live-stream-server/internal/models"
 	"github.com/imoowi/live-stream-server/internal/services"
@@ -51,8 +50,7 @@ func UserLogMiddleware() gin.HandlerFunc {
 					LogContent: `用户【` + c.GetString(`username`) + `】` + action + `了` + user_log_res_type_string + `【` + cast.ToString(user_log_obj_id) + `】`,
 					IP:         c.ClientIP(),
 				}
-				var fu interfaces.IFilter = &models.UserLogFilter{}
-				services.UserLog.Add(c, &fu, userlog)
+				services.UserLog.Add(c, userlog)
 			}
 			c.Next()
 		}

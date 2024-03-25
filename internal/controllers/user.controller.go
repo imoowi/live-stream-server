@@ -29,8 +29,7 @@ func UserPageList(c *gin.Context) {
 
 func UserOne(c *gin.Context) {
 	id := c.DefaultQuery(`id`, `0`)
-	var f interfaces.IFilter = &models.UserFilter{}
-	res, err := services.User.One(c, &f, cast.ToUint(id))
+	res, err := services.User.One(c, cast.ToUint(id))
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
@@ -58,14 +57,13 @@ func UserUpdate(c *gin.Context) {
 		response.Error(`pls input id`, http.StatusBadRequest, c)
 		return
 	}
-	addModel := &models.User{}
+	addModel := make(map[string]any)
 	err := c.ShouldBindBodyWith(&addModel, binding.JSON)
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}
-	var f interfaces.IFilter = &models.UserFilter{}
-	res, err := services.User.Update(c, &f, addModel, cast.ToUint(id))
+	res, err := services.User.Update(c, addModel, cast.ToUint(id))
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
@@ -79,8 +77,7 @@ func UserDelete(c *gin.Context) {
 		response.Error(`pls input id`, http.StatusBadRequest, c)
 		return
 	}
-	var f interfaces.IFilter = &models.UserFilter{}
-	res, err := services.User.Delete(c, &f, cast.ToUint(id))
+	res, err := services.User.Delete(c, cast.ToUint(id))
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return

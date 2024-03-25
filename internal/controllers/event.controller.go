@@ -18,17 +18,17 @@ import (
 	"gorm.io/gorm"
 )
 
-// @Summary	分页列表(pagelist)
-// @Tags		Event(直播活动)
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header		string				true	"Bearer 用户令牌"
-// @Param		{object}		query		models.EventFilter	false	"query参数"
-// @Success	200				{object}	response.PageList	"成功"
-// @Failure	400				"请求错误"
-// @Failure	401				"token验证失败"
-// @Failure	500				"内部错误"
-// @Router		/api/events [get]
+//	@Summary	分页列表(pagelist)
+//	@Tags		Event(直播活动)
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header		string								true	"Bearer 用户令牌"
+//	@Param		{object}		query		models.EventFilter					false	"query参数"
+//	@Success	200				{object}	response.PageListT[models.Event]	"成功"
+//	@Failure	400				"请求错误"
+//	@Failure	401				"token验证失败"
+//	@Failure	500				"内部错误"
+//	@Router		/api/events [get]
 func EventPageList(c *gin.Context) {
 	var filter interfaces.IFilter = &models.EventFilter{}
 	err := c.ShouldBindQuery(&filter)
@@ -59,17 +59,17 @@ func EventPageList(c *gin.Context) {
 	response.OK(result, c)
 }
 
-// @Summary	详情(one)
-// @Tags		Event(直播活动)
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string	true	"Bearer 用户令牌"
-// @Param		id				path	int		true	"id"
-// @Success	200
-// @Failure	400	"请求错误"
-// @Failure	401	"token验证失败"
-// @Failure	500	"内部错误"
-// @Router		/api/events/{id} [get]
+//	@Summary	详情(one)
+//	@Tags		Event(直播活动)
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string	true	"Bearer 用户令牌"
+//	@Param		id				path	int		true	"id"
+//	@Success	200
+//	@Failure	400	"请求错误"
+//	@Failure	401	"token验证失败"
+//	@Failure	500	"内部错误"
+//	@Router		/api/events/{id} [get]
 func EventOne(c *gin.Context) {
 	id := c.Param(`id`)
 	if id == `` {
@@ -77,26 +77,29 @@ func EventOne(c *gin.Context) {
 		return
 	}
 
-	var f interfaces.IFilter = &models.EventFilter{}
-	one, err := services.Event.One(c, &f, cast.ToUint(id))
+	one, err := services.Event.One(c, cast.ToUint(id))
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			response.Error(err.Error(), http.StatusNotFound, c)
+			return
+		}
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}
 	response.OK(one, c)
 }
 
-// @Summary	新增(add)
-// @Tags		Event(直播活动)
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string			true	"Bearer 用户令牌"
-// @Param		{object}		body	models.Event	true	"body"
-// @Success	200
-// @Failure	400	"请求错误"
-// @Failure	401	"token验证失败"
-// @Failure	500	"内部错误"
-// @Router		/api/events [post]
+//	@Summary	新增(add)
+//	@Tags		Event(直播活动)
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string			true	"Bearer 用户令牌"
+//	@Param		{object}		body	models.Event	true	"body"
+//	@Success	200
+//	@Failure	400	"请求错误"
+//	@Failure	401	"token验证失败"
+//	@Failure	500	"内部错误"
+//	@Router		/api/events [post]
 func EventAdd(c *gin.Context) {
 	event := &models.Event{}
 	err := c.ShouldBindBodyWith(&event, binding.JSON)
@@ -104,8 +107,7 @@ func EventAdd(c *gin.Context) {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}
-	var f interfaces.IFilter = &models.EventFilter{}
-	newId, err := services.Event.Add(c, &f, event)
+	newId, err := services.Event.Add(c, event)
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
@@ -113,76 +115,82 @@ func EventAdd(c *gin.Context) {
 	response.OK(newId, c)
 }
 
-// @Summary	更新(update)
-// @Tags		Event(直播活动)
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string			true	"Bearer 用户令牌"
-// @Param		id				path	int				true	"id"
-// @Param		{object}		body	models.Event	true	"body"
-// @Success	200
-// @Failure	400	"请求错误"
-// @Failure	401	"token验证失败"
-// @Failure	500	"内部错误"
-// @Router		/api/events/{id} [put]
+//	@Summary	更新(update)
+//	@Tags		Event(直播活动)
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string			true	"Bearer 用户令牌"
+//	@Param		id				path	int				true	"id"
+//	@Param		{object}		body	models.Event	true	"body"
+//	@Success	200
+//	@Failure	400	"请求错误"
+//	@Failure	401	"token验证失败"
+//	@Failure	500	"内部错误"
+//	@Router		/api/events/{id} [put]
 func EventUpdate(c *gin.Context) {
 	id := c.Param(`id`)
 	if id == `` {
 		response.Error(`pls input id`, http.StatusBadRequest, c)
 		return
 	}
-	event := &models.Event{}
+	event := make(map[string]any)
 	err := c.ShouldBindBodyWith(&event, binding.JSON)
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}
-	var f interfaces.IFilter = &models.EventFilter{}
-	updated, err := services.Event.Update(c, &f, event, cast.ToUint(id))
+	updated, err := services.Event.Update(c, event, cast.ToUint(id))
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			response.Error(err.Error(), http.StatusNotFound, c)
+			return
+		}
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}
 	response.OK(updated, c)
 }
 
-// @Summary	删除(delete)
-// @Tags		Event(直播活动)
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string	true	"Bearer 用户令牌"
-// @Param		id				path	int		true	"id"
-// @Success	200
-// @Failure	400	"请求错误"
-// @Failure	401	"token验证失败"
-// @Failure	500	"内部错误"
-// @Router		/api/events/{id} [delete]
+//	@Summary	删除(delete)
+//	@Tags		Event(直播活动)
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string	true	"Bearer 用户令牌"
+//	@Param		id				path	int		true	"id"
+//	@Success	200
+//	@Failure	400	"请求错误"
+//	@Failure	401	"token验证失败"
+//	@Failure	500	"内部错误"
+//	@Router		/api/events/{id} [delete]
 func EventDel(c *gin.Context) {
 	id := c.Param(`id`)
 	if id == `` {
 		response.Error(`pls input id`, http.StatusBadRequest, c)
 		return
 	}
-	var f interfaces.IFilter = &models.EventFilter{}
-	deleted, err := services.Event.Delete(c, &f, cast.ToUint(id))
+	deleted, err := services.Event.Delete(c, cast.ToUint(id))
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			response.Error(err.Error(), http.StatusNotFound, c)
+			return
+		}
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}
 	response.OK(deleted, c)
 }
 
-// @Summary	状态Map
-// @Tags		Event(直播活动)
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string	true	"Bearer 用户令牌"
-// @Param		id				path	int		true	"id"
-// @Success	200
-// @Failure	400	"请求错误"
-// @Failure	401	"token验证失败"
-// @Failure	500	"内部错误"
-// @Router		/api/event/status [get]
+//	@Summary	状态Map
+//	@Tags		Event(直播活动)
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string	true	"Bearer 用户令牌"
+//	@Param		id				path	int		true	"id"
+//	@Success	200
+//	@Failure	400	"请求错误"
+//	@Failure	401	"token验证失败"
+//	@Failure	500	"内部错误"
+//	@Router		/api/event/status [get]
 func EventStatus(c *gin.Context) {
 	response.OK(services.Event.Status(), c)
 }

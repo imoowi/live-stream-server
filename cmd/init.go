@@ -9,7 +9,6 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-	"github.com/imoowi/comer/interfaces"
 	"github.com/imoowi/live-stream-server/internal/global"
 	"github.com/imoowi/live-stream-server/internal/models"
 	"github.com/imoowi/live-stream-server/internal/repos"
@@ -59,12 +58,11 @@ func initDb() {
 	c.Set(`isInit`, true)
 	// 添加超管角色
 	superRoleName := `超级管理员`
-	var fr interfaces.IFilter = &models.RoleFilter{}
 	var superRoleId uint
-	_role, err := services.Role.OneByName(c, &fr, superRoleName)
+	_role, err := services.Role.OneByName(c, superRoleName)
 	if err != nil || (*_role).GetID() <= 0 {
 		role := &models.Role{Name: `超级管理员`, Level: models.ROLE_LEVEL_SUPER}
-		roleId, err := services.Role.Add(c, &fr, role)
+		roleId, err := services.Role.Add(c, role)
 		if err != nil {
 			log.Println(err.Error())
 			return

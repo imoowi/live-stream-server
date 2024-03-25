@@ -19,18 +19,18 @@ import (
 )
 
 //	@Summary	分页列表(pagelist)
-//	@Tags		RetweetStream(转推流)
+//	@Tags		menu
 //	@Accept		application/json
 //	@Produce	application/json
-//	@Param		Authorization	header		string										true	"Bearer 用户令牌"
-//	@Param		{object}		query		models.RetweetStreamFilter					false	"query参数"
-//	@Success	200				{object}	response.PageListT[models.RetweetStream]	"成功"
+//	@Param		Authorization	header		string							true	"Bearer 用户令牌"
+//	@Param		{object}		query		models.MenuFilter				false	"query参数"
+//	@Success	200				{object}	response.PageListT[models.Menu]	"成功"
 //	@Failure	400				"请求错误"
 //	@Failure	401				"token验证失败"
 //	@Failure	500				"内部错误"
-//	@Router		/api/retweet-streams [get]
-func RetweetStreamPageList(c *gin.Context) {
-	var filter interfaces.IFilter = &models.RetweetStreamFilter{}
+//	@Router		/api/menus [get]
+func MenuPageList(c *gin.Context) {
+	var filter interfaces.IFilter = &models.MenuFilter{}
 	err := c.ShouldBindQuery(&filter)
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
@@ -47,7 +47,7 @@ func RetweetStreamPageList(c *gin.Context) {
 		response.Error(`每一页不能超过1000条记录`, http.StatusBadRequest, c)
 		return
 	}
-	result, err := services.RetweetStream.PageList(c, &filter)
+	result, err := services.Menu.PageList(c, &filter)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			response.Error(err.Error(), http.StatusNotFound, c)
@@ -60,24 +60,24 @@ func RetweetStreamPageList(c *gin.Context) {
 }
 
 //	@Summary	详情(one)
-//	@Tags		RetweetStream(转推流)
+//	@Tags		menu
 //	@Accept		application/json
 //	@Produce	application/json
-//	@Param		Authorization	header	string	true	"Bearer 用户令牌"
-//	@Param		id				path	int		true	"id"
-//	@Success	200
-//	@Failure	400	"请求错误"
-//	@Failure	401	"token验证失败"
-//	@Failure	500	"内部错误"
-//	@Router		/api/retweet-streams/{id} [get]
-func RetweetStreamOne(c *gin.Context) {
+//	@Param		Authorization	header		string		true	"Bearer 用户令牌"
+//	@Param		id				path		int			true	"id"
+//	@Success	200				{object}	models.Menu	"成功"
+//	@Failure	400				"请求错误"
+//	@Failure	401				"token验证失败"
+//	@Failure	500				"内部错误"
+//	@Router		/api/menus/{id} [get]
+func MenuOne(c *gin.Context) {
 	id := c.Param(`id`)
 	if id == `` {
 		response.Error(`pls input id`, http.StatusBadRequest, c)
 		return
 	}
 
-	one, err := services.RetweetStream.One(c, cast.ToUint(id))
+	one, err := services.Menu.One(c, cast.ToUint(id))
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
@@ -86,24 +86,24 @@ func RetweetStreamOne(c *gin.Context) {
 }
 
 //	@Summary	新增(add)
-//	@Tags		RetweetStream(转推流)
+//	@Tags		menu
 //	@Accept		application/json
 //	@Produce	application/json
-//	@Param		Authorization	header	string					true	"Bearer 用户令牌"
-//	@Param		{object}		body	models.RetweetStream	true	"body"
+//	@Param		Authorization	header	string		true	"Bearer 用户令牌"
+//	@Param		{object}		body	models.Menu	true	"body"
 //	@Success	200
 //	@Failure	400	"请求错误"
 //	@Failure	401	"token验证失败"
 //	@Failure	500	"内部错误"
-//	@Router		/api/retweet-streams [post]
-func RetweetStreamAdd(c *gin.Context) {
-	var model *models.RetweetStream
-	err := c.ShouldBindBodyWith(&model, binding.JSON)
+//	@Router		/api/menus [post]
+func MenuAdd(c *gin.Context) {
+	menu := &models.Menu{}
+	err := c.ShouldBindBodyWith(&menu, binding.JSON)
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}
-	newId, err := services.RetweetStream.Add(c, model)
+	newId, err := services.Menu.Add(c, menu)
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
@@ -112,31 +112,35 @@ func RetweetStreamAdd(c *gin.Context) {
 }
 
 //	@Summary	更新(update)
-//	@Tags		RetweetStream(转推流)
+//	@Tags		menu
 //	@Accept		application/json
 //	@Produce	application/json
-//	@Param		Authorization	header	string					true	"Bearer 用户令牌"
-//	@Param		id				path	int						true	"id"
-//	@Param		{object}		body	models.RetweetStream	true	"body"
+//	@Param		Authorization	header	string		true	"Bearer 用户令牌"
+//	@Param		id				path	int			true	"id"
+//	@Param		{object}		body	models.Menu	true	"body"
 //	@Success	200
 //	@Failure	400	"请求错误"
 //	@Failure	401	"token验证失败"
 //	@Failure	500	"内部错误"
-//	@Router		/api/retweet-streams/{id} [put]
-func RetweetStreamUpdate(c *gin.Context) {
+//	@Router		/api/menus/{id} [put]
+func MenuUpdate(c *gin.Context) {
 	id := c.Param(`id`)
 	if id == `` {
 		response.Error(`pls input id`, http.StatusBadRequest, c)
 		return
 	}
-	model := make(map[string]any)
-	err := c.ShouldBindBodyWith(&model, binding.JSON)
+	menu := make(map[string]any)
+	err := c.ShouldBindBodyWith(&menu, binding.JSON)
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}
-	updated, err := services.RetweetStream.Update(c, model, cast.ToUint(id))
+	updated, err := services.Menu.Update(c, menu, cast.ToUint(id))
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			response.Error(err.Error(), http.StatusNotFound, c)
+			return
+		}
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}
@@ -144,7 +148,7 @@ func RetweetStreamUpdate(c *gin.Context) {
 }
 
 //	@Summary	删除(delete)
-//	@Tags		RetweetStream(转推流)
+//	@Tags		menu
 //	@Accept		application/json
 //	@Produce	application/json
 //	@Param		Authorization	header	string	true	"Bearer 用户令牌"
@@ -153,15 +157,19 @@ func RetweetStreamUpdate(c *gin.Context) {
 //	@Failure	400	"请求错误"
 //	@Failure	401	"token验证失败"
 //	@Failure	500	"内部错误"
-//	@Router		/api/retweet-streams/{id} [delete]
-func RetweetStreamDel(c *gin.Context) {
+//	@Router		/api/menus/{id} [delete]
+func MenuDel(c *gin.Context) {
 	id := c.Param(`id`)
 	if id == `` {
 		response.Error(`pls input id`, http.StatusBadRequest, c)
 		return
 	}
-	deleted, err := services.RetweetStream.Delete(c, cast.ToUint(id))
+	deleted, err := services.Menu.Delete(c, cast.ToUint(id))
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			response.Error(err.Error(), http.StatusNotFound, c)
+			return
+		}
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}

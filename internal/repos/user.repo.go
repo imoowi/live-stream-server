@@ -8,7 +8,6 @@ import (
 	"errors"
 
 	"github.com/gin-gonic/gin"
-	"github.com/imoowi/comer/interfaces"
 	"github.com/imoowi/comer/interfaces/impl"
 	"github.com/imoowi/comer/utils/maker"
 	"github.com/imoowi/comer/utils/password"
@@ -53,8 +52,7 @@ func (r *UserRepo) Login(c *gin.Context, login *models.UserLogin) (*models.User,
 }
 
 func (r *UserRepo) ChgPwd(c *gin.Context, userChgPwd *models.UserChgPwd) (ok bool, err error) {
-	var q interfaces.IFilter = &models.UserFilter{}
-	user, err := r.One(c, &q, userChgPwd.UserId)
+	user, err := r.One(c, userChgPwd.UserId)
 	if err != nil {
 		return
 	}

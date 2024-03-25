@@ -8,7 +8,6 @@ import (
 	"errors"
 
 	"github.com/gin-gonic/gin"
-	"github.com/imoowi/comer/interfaces"
 	"github.com/imoowi/comer/interfaces/impl"
 	"github.com/imoowi/comer/utils/maker"
 	"github.com/imoowi/comer/utils/password"
@@ -39,11 +38,9 @@ func (s *UserService) OneByUsername(c *gin.Context, username string) (model *mod
 	return repos.User.OneByUsername(c, username)
 }
 func (s *UserService) Add(c *gin.Context, _model *models.UserAdd) (newId uint, err error) {
-	var f interfaces.IFilter = &models.UserFilter{}
-	admin, _ := s.One(c, &f, c.GetUint(`uid`))
+	admin, _ := s.One(c, c.GetUint(`uid`))
 	// 角色是否存在？
-	var fr interfaces.IFilter = &models.RoleFilter{}
-	role, _ := Role.One(c, &fr, _model.RoleId)
+	role, _ := Role.One(c, _model.RoleId)
 	if role == nil || (*role).GetID() <= 0 {
 		newId = 0
 		err = errors.New(`角色不存在`)
@@ -65,12 +62,11 @@ func (s *UserService) Add(c *gin.Context, _model *models.UserAdd) (newId uint, e
 			Salt:   salt,
 		},
 	}
-	newId, err = s.Service.Add(c, &f, newUser)
+	newId, err = s.Service.Add(c, newUser)
 	if newId > 0 {
 		// 插入用户和角色关系
 		userrole := &models.UserRole{UserID: newId, RoleId: _model.RoleId}
-		var fur interfaces.IFilter = &models.UserRoleFilter{}
-		UserRole.Add(c, &fur, userrole)
+		UserRole.Add(c, userrole)
 
 		//*
 		go func(c *gin.Context, _model *models.UserAdd, newId uint) {
@@ -83,8 +79,7 @@ func (s *UserService) Add(c *gin.Context, _model *models.UserAdd) (newId uint, e
 					LogContent: `管理员【` + admin.Username + `】添加了用户【` + cast.ToString(newId) + `】`,
 					IP:         c.ClientIP(),
 				}
-				var ful interfaces.IFilter = &models.UserLogFilter{}
-				UserLog.Add(c, &ful, userlog)
+				UserLog.Add(c, userlog)
 			}
 		}(c, _model, newId)
 		//*/
@@ -99,8 +94,7 @@ func (s *UserService) Login(c *gin.Context, login *models.UserLogin) (user *mode
 func (s *UserService) Logout(c *gin.Context, token string) bool {
 	// err := global.Redis.SAdd(c, JwtTokenBlackListSetKey, token).Err()
 	var err error
-	var fu interfaces.IFilter = &models.UserFilter{}
-	admin, _ := repos.User.One(c, &fu, c.GetUint(`uid`))
+	admin, _ := repos.User.One(c, c.GetUint(`uid`))
 	if (*admin).GetID() > 0 {
 		go func(c *gin.Context, admin *models.User) {
 			userlog := &models.UserLog{
@@ -110,16 +104,14 @@ func (s *UserService) Logout(c *gin.Context, token string) bool {
 				LogContent: `用户【` + admin.Username + `】退出了系统`,
 				IP:         c.ClientIP(),
 			}
-			var ful interfaces.IFilter = &models.UserLogFilter{}
-			UserLog.Add(c, &ful, userlog)
-		}(c, *admin)
+			UserLog.Add(c, userlog)
+		}(c, admin)
 	}
 	return err == nil
 }
 
 func (s *UserService) ChgPwd(c *gin.Context, userChgPwd *models.UserChgPwd) (newToken string, err error) {
-	var fu interfaces.IFilter = &models.UserFilter{}
-	admin, _ := repos.User.One(c, &fu, c.GetUint(`uid`))
+	admin, _ := repos.User.One(c, c.GetUint(`uid`))
 	ok, err := repos.User.ChgPwd(c, userChgPwd)
 	if err == nil && ok {
 		if (*admin).GetID() > 0 {
@@ -132,9 +124,8 @@ func (s *UserService) ChgPwd(c *gin.Context, userChgPwd *models.UserChgPwd) (new
 					LogContent: `用户【` + admin.Username + `】修改了密码`,
 					IP:         c.ClientIP(),
 				}
-				var ful interfaces.IFilter = &models.UserLogFilter{}
-				UserLog.Add(c, &ful, userlog)
-			}(c, *admin)
+				UserLog.Add(c, userlog)
+			}(c, admin)
 		}
 	}
 	return
@@ -156,8 +147,7 @@ func (s *UserService) IsSuper(c *gin.Context, userId uint) bool {
 		return false
 	}
 	for _, v := range userRoles {
-		var fr interfaces.IFilter = &models.RoleFilter{}
-		role, err := Role.One(c, &fr, v.RoleId)
+		role, err := Role.One(c, v.RoleId)
 		if err != nil {
 			continue
 		}
@@ -186,8 +176,7 @@ func (s *UserService) UserRolesByUid(c *gin.Context, userId uint) (roles []*mode
 		return nil
 	}
 	for _, v := range userRoles {
-		var fr interfaces.IFilter = &models.RoleFilter{}
-		role, err := Role.One(c, &fr, v.RoleId)
+		role, err := Role.One(c, v.RoleId)
 		if err != nil {
 			continue
 		}

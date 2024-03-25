@@ -18,17 +18,17 @@ import (
 	"gorm.io/gorm"
 )
 
-// @Summary	分页列表(pagelist)
-// @Tags		SrsHook(srs钩子)
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header		string					true	"Bearer 用户令牌"
-// @Param		{object}		query		models.SrsHookFilter	false	"query参数"
-// @Success	200				{object}	response.PageList		"成功"
-// @Failure	400				"请求错误"
-// @Failure	401				"token验证失败"
-// @Failure	500				"内部错误"
-// @Router		/api/srs-hooks [get]
+//	@Summary	分页列表(pagelist)
+//	@Tags		SrsHook(srs钩子)
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header		string								true	"Bearer 用户令牌"
+//	@Param		{object}		query		models.SrsHookFilter				false	"query参数"
+//	@Success	200				{object}	response.PageListT[models.SrsHook]	"成功"
+//	@Failure	400				"请求错误"
+//	@Failure	401				"token验证失败"
+//	@Failure	500				"内部错误"
+//	@Router		/api/srs-hooks [get]
 func SrsHookPageList(c *gin.Context) {
 	var filter interfaces.IFilter = &models.SrsHookFilter{}
 	err := c.ShouldBindQuery(&filter)
@@ -59,17 +59,17 @@ func SrsHookPageList(c *gin.Context) {
 	response.OK(result, c)
 }
 
-// @Summary	详情(one)
-// @Tags		SrsHook(srs钩子)
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string	true	"Bearer 用户令牌"
-// @Param		id				path	int		true	"id"
-// @Success	200
-// @Failure	400	"请求错误"
-// @Failure	401	"token验证失败"
-// @Failure	500	"内部错误"
-// @Router		/api/srs-hooks/{id} [get]
+//	@Summary	详情(one)
+//	@Tags		SrsHook(srs钩子)
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string	true	"Bearer 用户令牌"
+//	@Param		id				path	int		true	"id"
+//	@Success	200
+//	@Failure	400	"请求错误"
+//	@Failure	401	"token验证失败"
+//	@Failure	500	"内部错误"
+//	@Router		/api/srs-hooks/{id} [get]
 func SrsHookOne(c *gin.Context) {
 	id := c.Param(`id`)
 	if id == `` {
@@ -77,8 +77,7 @@ func SrsHookOne(c *gin.Context) {
 		return
 	}
 
-	var f interfaces.IFilter = &models.SrsHookFilter{}
-	one, err := services.SrsHook.One(c, &f, cast.ToUint(id))
+	one, err := services.SrsHook.One(c, cast.ToUint(id))
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
@@ -86,17 +85,17 @@ func SrsHookOne(c *gin.Context) {
 	response.OK(one, c)
 }
 
-// @Summary	新增(add)
-// @Tags		SrsHook(srs钩子)
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string			true	"Bearer 用户令牌"
-// @Param		{object}		body	models.SrsHook	true	"body"
-// @Success	200
-// @Failure	400	"请求错误"
-// @Failure	401	"token验证失败"
-// @Failure	500	"内部错误"
-// @Router		/api/srs-hooks [post]
+//	@Summary	新增(add)
+//	@Tags		SrsHook(srs钩子)
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string			true	"Bearer 用户令牌"
+//	@Param		{object}		body	models.SrsHook	true	"body"
+//	@Success	200
+//	@Failure	400	"请求错误"
+//	@Failure	401	"token验证失败"
+//	@Failure	500	"内部错误"
+//	@Router		/api/srs-hooks [post]
 func SrsHookAdd(c *gin.Context) {
 	srshook := &models.SrsHook{}
 	err := c.ShouldBindBodyWith(&srshook, binding.JSON)
@@ -104,8 +103,7 @@ func SrsHookAdd(c *gin.Context) {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}
-	var f interfaces.IFilter = &models.SrsHookFilter{}
-	newId, err := services.SrsHook.Add(c, &f, srshook)
+	newId, err := services.SrsHook.Add(c, srshook)
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
@@ -113,32 +111,31 @@ func SrsHookAdd(c *gin.Context) {
 	response.OK(newId, c)
 }
 
-// @Summary	更新(update)
-// @Tags		SrsHook(srs钩子)
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string			true	"Bearer 用户令牌"
-// @Param		id				path	int				true	"id"
-// @Param		{object}		body	models.SrsHook	true	"body"
-// @Success	200
-// @Failure	400	"请求错误"
-// @Failure	401	"token验证失败"
-// @Failure	500	"内部错误"
-// @Router		/api/srs-hooks/{id} [put]
+//	@Summary	更新(update)
+//	@Tags		SrsHook(srs钩子)
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string			true	"Bearer 用户令牌"
+//	@Param		id				path	int				true	"id"
+//	@Param		{object}		body	models.SrsHook	true	"body"
+//	@Success	200
+//	@Failure	400	"请求错误"
+//	@Failure	401	"token验证失败"
+//	@Failure	500	"内部错误"
+//	@Router		/api/srs-hooks/{id} [put]
 func SrsHookUpdate(c *gin.Context) {
 	id := c.Param(`id`)
 	if id == `` {
 		response.Error(`pls input id`, http.StatusBadRequest, c)
 		return
 	}
-	srshook := &models.SrsHook{}
+	srshook := make(map[string]any)
 	err := c.ShouldBindBodyWith(&srshook, binding.JSON)
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
 	}
-	var f interfaces.IFilter = &models.SrsHookFilter{}
-	updated, err := services.SrsHook.Update(c, &f, srshook, cast.ToUint(id))
+	updated, err := services.SrsHook.Update(c, srshook, cast.ToUint(id))
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
@@ -146,25 +143,24 @@ func SrsHookUpdate(c *gin.Context) {
 	response.OK(updated, c)
 }
 
-// @Summary	删除(delete)
-// @Tags		SrsHook(srs钩子)
-// @Accept		application/json
-// @Produce	application/json
-// @Param		Authorization	header	string	true	"Bearer 用户令牌"
-// @Param		id				path	int		true	"id"
-// @Success	200
-// @Failure	400	"请求错误"
-// @Failure	401	"token验证失败"
-// @Failure	500	"内部错误"
-// @Router		/api/srs-hooks/{id} [delete]
+//	@Summary	删除(delete)
+//	@Tags		SrsHook(srs钩子)
+//	@Accept		application/json
+//	@Produce	application/json
+//	@Param		Authorization	header	string	true	"Bearer 用户令牌"
+//	@Param		id				path	int		true	"id"
+//	@Success	200
+//	@Failure	400	"请求错误"
+//	@Failure	401	"token验证失败"
+//	@Failure	500	"内部错误"
+//	@Router		/api/srs-hooks/{id} [delete]
 func SrsHookDel(c *gin.Context) {
 	id := c.Param(`id`)
 	if id == `` {
 		response.Error(`pls input id`, http.StatusBadRequest, c)
 		return
 	}
-	var f interfaces.IFilter = &models.SrsHookFilter{}
-	deleted, err := services.SrsHook.Delete(c, &f, cast.ToUint(id))
+	deleted, err := services.SrsHook.Delete(c, cast.ToUint(id))
 	if err != nil {
 		response.Error(err.Error(), http.StatusBadRequest, c)
 		return
