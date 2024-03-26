@@ -5,6 +5,7 @@ Copyright © 2023 jun<simpleyuan@gmail.com>
 package services
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/imoowi/comer/interfaces/impl"
 	"github.com/imoowi/live-stream-server/internal/models"
 	"github.com/imoowi/live-stream-server/internal/repos"
@@ -26,4 +27,8 @@ func init() {
 	RegisterServices(func() {
 		SrsHook = NewSrsHookService(repos.SrsHook)
 	})
+}
+
+func (s *SrsHookService) Log(c *gin.Context, model *models.SrsHook) (ok bool, err error) {
+	return repos.SrsHook.Log(c, model)
 }

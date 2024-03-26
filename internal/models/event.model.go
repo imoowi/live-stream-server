@@ -23,15 +23,17 @@ var EventStatusMap = map[EventStatus]string{
 }
 
 type EventBase struct {
-	Name         string      `json:"name" form:"name" gorm:"column:name;type:varchar(30);not null;comment:名" `
-	Cover        string      `json:"cover" form:"cover" gorm:"column:cover;type:varchar(255);null;comment:封面"`
-	Status       EventStatus `json:"status" form:"status" gorm:"column:status;type:tinyint(3);default:0;comment:状态"`
-	Description  string      `json:"description" form:"description" gorm:"column:description;type:text;default:null;comment:描述"`
-	RtmpPush     string      `json:"rtmp_push" form:"rtmp_push" gorm:"column:rtmp_push;type:varchar(255);default:null;comment:推流地址"`
-	RtmpPushCode string      `json:"rtmp_push_code" form:"rtmp_push_code" gorm:"column:rtmp_push_code;type:varchar(30);default:null;comment:推流码"`
-	RtmpPull     string      `json:"rtmp_pull" form:"rtmp_pull" gorm:"column:rtmp_pull;type:varchar(255);default:null;comment:拉流地址"`
-	RtmpPullCode string      `json:"rtmp_pull_code" form:"rtmp_pull_code" gorm:"column:rtmp_pull_code;type:varchar(30);default:null;comment:拉流码"`
-	Token        string      `json:"token" form:"token" gorm:"column:token;type:varchar(255);default:null;comment:token"`
+	Name              string      `json:"name" form:"name" gorm:"column:name;type:varchar(30);not null;comment:名" `
+	Cover             string      `json:"cover" form:"cover" gorm:"column:cover;type:varchar(255);null;comment:封面"`
+	Status            EventStatus `json:"status" form:"status" gorm:"column:status;type:tinyint(3);default:0;comment:状态"`
+	Description       string      `json:"description" form:"description" gorm:"column:description;type:text;default:null;comment:描述"`
+	RtmpPush          string      `json:"rtmp_push" form:"rtmp_push" gorm:"column:rtmp_push;type:varchar(255);default:null;comment:推流地址"`
+	RtmpPushCode      string      `json:"rtmp_push_code" form:"rtmp_push_code" gorm:"column:rtmp_push_code;type:varchar(30);default:null;comment:推流码"`
+	RtmpPull          string      `json:"rtmp_pull" form:"rtmp_pull" gorm:"column:rtmp_pull;type:varchar(255);default:null;comment:拉流地址"`
+	RtmpPullCode      string      `json:"rtmp_pull_code" form:"rtmp_pull_code" gorm:"column:rtmp_pull_code;type:varchar(30);default:null;comment:拉流码"`
+	ThirdRtmpPush     string      `json:"third_rtmp_push" form:"third_rtmp_push" gorm:"column:third_rtmp_push;type:varchar(255);default:null;comment:第三方推流地址"`
+	ThirdRtmpPushCode string      `json:"third_rtmp_push_code" form:"third_rtmp_push_code" gorm:"column:third_rtmp_push_code;type:varchar(30);default:null;comment:第三方推流地址码"`
+	Token             string      `json:"token" form:"token" gorm:"column:token;type:varchar(255);default:null;comment:token"`
 }
 
 // Event表

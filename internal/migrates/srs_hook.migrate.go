@@ -13,5 +13,5 @@ func init() {
 	RegisterMigrate(doSrsHookMigrate)
 }
 func doSrsHookMigrate() {
-	global.MysqlDb.Client.Set("gorm:table_options", "ENGINE=InnoDB,COMMENT='角色表'").AutoMigrate(&models.SrsHook{})
+	global.MysqlDb.Client.Set("gorm:table_options", "ENGINE=InnoDB,COMMENT='hook表'").AutoMigrate(&models.SrsHook{})
 }

@@ -5,8 +5,6 @@ Copyright © 2023 jun<simpleyuan@gmail.com>
 package repos
 
 import (
-	"encoding/json"
-
 	"github.com/gin-gonic/gin"
 	"github.com/imoowi/comer/interfaces/impl"
 	"github.com/imoowi/live-stream-server/internal/global"
@@ -30,19 +28,10 @@ func init() {
 	RegisterRepos(NewSrsHookRepo)
 }
 
-func (r *SrsHookRepo) Log(c *gin.Context, stream string, data map[string]any) (ok bool, err error) {
-	model := &models.SrsHook{}
-	model.SetTableName(`srs_hook_log` + stream)
+func (r *SrsHookRepo) Log(c *gin.Context, model *models.SrsHook) (ok bool, err error) {
+	table := model.TableName() + `_` + model.Stream
 	db := r.DB.Client
-	r.DB.Client.Set("gorm:table_options", "ENGINE=InnoDB,COMMENT='srshook_log表'").AutoMigrate(&model)
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return
-	}
-	err = json.Unmarshal(jsonData, &model)
-	if err != nil {
-		return
-	}
-	err = db.Save(&model).Error
+	r.DB.Client.Set("gorm:table_options", "ENGINE=InnoDB,COMMENT='srshook_log表'").Table(table).AutoMigrate(&model)
+	err = db.Table(table).Save(&model).Error
 	return
 }

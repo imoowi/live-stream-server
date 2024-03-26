@@ -36,3 +36,11 @@ func (s *EventService) Status() any {
 func (s *EventService) Add(c *gin.Context, model *models.Event) (newId uint, err error) {
 	return repos.Event.Add(c, model)
 }
+
+func (s *EventService) GetOneByStream(c *gin.Context, stream string) (model *models.Event, err error) {
+	return repos.Event.GetOneByStream(c, stream)
+}
+
+func (s *EventService) ChangeStatus(c *gin.Context, status models.EventStatus, id uint) (ok bool, err error) {
+	return repos.Event.ChangeStatus(c, status, id)
+}

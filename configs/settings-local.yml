@@ -39,5 +39,5 @@ cache:
   prefix: "live-stream-server:cache"
 
 live:
-  rtmp: rtmp://test-rtmp.orthonline.com.cn/live
+  rtmp: rtmp://rtmp.imoowi.com/live
   ffmpegpath: /usr/bin/ffmpeg
