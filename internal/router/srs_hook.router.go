@@ -7,6 +7,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/imoowi/live-stream-server/internal/controllers"
+	"github.com/imoowi/live-stream-server/internal/middlewares"
 )
 
 func init() {
@@ -15,11 +16,11 @@ func init() {
 
 func SrsHookRouters(e *gin.Engine) {
 	api := e.Group("/api")
-	// api.Use(middlewares.JWTAuthMiddleware())
-	// api.Use(middlewares.CasbinMiddleware())
-	// api.Use(middlewares.UserLogMiddleware())
 	srsHooks := api.Group("/srs-hooks")
 	{
+		srsHooks.Use(middlewares.JWTAuthMiddleware())
+		srsHooks.Use(middlewares.CasbinMiddleware())
+		srsHooks.Use(middlewares.UserLogMiddleware())
 		srsHooks.GET("", controllers.SrsHookPageList)   //分页
 		srsHooks.GET("/:id", controllers.SrsHookOne)    //一个
 		srsHooks.POST("", controllers.SrsHookAdd)       //新增

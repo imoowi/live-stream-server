@@ -7,6 +7,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/imoowi/live-stream-server/internal/controllers"
+	"github.com/imoowi/live-stream-server/internal/middlewares"
 )
 
 func init() {
@@ -15,9 +16,9 @@ func init() {
 
 func EventRouters(e *gin.Engine) {
 	api := e.Group("/api")
-	// api.Use(middlewares.JWTAuthMiddleware())
-	// api.Use(middlewares.CasbinMiddleware())
-	// api.Use(middlewares.UserLogMiddleware())
+	api.Use(middlewares.JWTAuthMiddleware())
+	api.Use(middlewares.CasbinMiddleware())
+	api.Use(middlewares.UserLogMiddleware())
 	events := api.Group("/events")
 	{
 		events.GET("", controllers.EventPageList)   //分页
