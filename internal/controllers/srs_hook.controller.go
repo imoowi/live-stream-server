@@ -174,7 +174,7 @@ func SrsHookDel(c *gin.Context) {
 }
 
 // @Summary	streams/publish
-// @Tags		orth-srs-hooks
+// @Tags		srs-hooks
 // @Accept		application/json
 // @Produce	application/json
 // @Param		Authorization	header	string			true	"Bearer 用户令牌"
@@ -242,4 +242,240 @@ func StreamPublish(c *gin.Context) {
 			response.OK(responseMap, c)
 		}
 	}
+}
+
+// @Summary	streams/unpublish
+// @Tags		srs-hooks
+// @Accept		application/json
+// @Produce	application/json
+// @Param		Authorization	header		string					true	"Bearer 用户令牌"
+// @Param		{object}		body	models.SrsHook	true	"body"
+// @Success	200	 "成功"
+// @Failure	400				{object}	string					"请求错误"
+// @Failure	401				{object}	string					"token验证失败"
+// @Failure	500				{object}	string					"内部错误"
+// @Router		/api/srshooks/streams/unpublish [post]
+func StreamsUnPublish(c *gin.Context) {
+
+	model := &models.SrsHook{}
+	err := c.ShouldBindBodyWith(&model, binding.JSON)
+	if err != nil {
+		response.Error(err.Error(), http.StatusBadRequest, c)
+		return
+	}
+	URL, _ := url.Parse(model.Param)
+	args := URL.Query()
+	if token, ok := args[`token`]; ok {
+		event, err := services.Event.GetOneByStream(c, model.Stream)
+		if err != nil {
+			return
+		}
+		if token[0] != event.Token {
+			//鉴权没通过
+			return
+		}
+		services.Event.ChangeStatus(c, models.EventStatusEnd, event.ID)
+		services.SrsHook.Log(c, model)
+		responseMap := map[string]any{
+			`code`: 0,
+			`msg`:  `OK`,
+		}
+		response.OK(responseMap, c)
+	}
+}
+
+// @Summary	sessions/play
+// @Tags		srs-hooks
+// @Accept		application/json
+// @Produce	application/json
+// @Param		Authorization	header		string					true	"Bearer 用户令牌"
+// @Param		{object}		body	models.SrsHook	true	"body"
+// @Success	200 "成功"
+// @Failure	400				{object}	string					"请求错误"
+// @Failure	401				{object}	string					"token验证失败"
+// @Failure	500				{object}	string					"内部错误"
+// @Router		/api/srshooks/sessions/play [post]
+func SessionsPlay(c *gin.Context) {
+
+	model := &models.SrsHook{}
+	err := c.ShouldBindBodyWith(&model, binding.JSON)
+	if err != nil {
+		response.Error(err.Error(), http.StatusBadRequest, c)
+		return
+	}
+	URL, _ := url.Parse(model.Param)
+	args := URL.Query()
+	if token, ok := args[`token`]; ok {
+		event, err := services.Event.GetOneByStream(c, model.Stream)
+		if err != nil {
+			return
+		}
+		if token[0] != event.Token {
+			//鉴权没通过
+			return
+		}
+		services.SrsHook.Log(c, model)
+		responseMap := map[string]any{
+			`code`: 0,
+			`msg`:  `OK`,
+		}
+		response.OK(responseMap, c)
+	}
+}
+
+// @Summary	sessions/stop
+// @Tags		srs-hooks
+// @Accept		application/json
+// @Produce	application/json
+// @Param		Authorization	header		string					true	"Bearer 用户令牌"
+// @Param		body			body		models.SrsHook	true	"models.SrsHook"
+// @Success	200 "成功"
+// @Failure	400				{object}	string					"请求错误"
+// @Failure	401				{object}	string					"token验证失败"
+// @Failure	500				{object}	string					"内部错误"
+// @Router		/api/srshooks/sessions/stop [post]
+func SessionsStop(c *gin.Context) {
+	model := &models.SrsHook{}
+	err := c.ShouldBindBodyWith(&model, binding.JSON)
+	if err != nil {
+		response.Error(err.Error(), http.StatusBadRequest, c)
+		return
+	}
+	URL, _ := url.Parse(model.Param)
+	args := URL.Query()
+	if token, ok := args[`token`]; ok {
+		event, err := services.Event.GetOneByStream(c, model.Stream)
+		if err != nil {
+			return
+		}
+		if token[0] != event.Token {
+			//鉴权没通过
+			return
+		}
+		services.SrsHook.Log(c, model)
+		responseMap := map[string]any{
+			`code`: 0,
+			`msg`:  `OK`,
+		}
+		response.OK(responseMap, c)
+	}
+
+}
+
+// @Summary	dvrs
+// @Tags		srs-hooks
+// @Accept		application/json
+// @Produce	application/json
+// @Param		Authorization	header		string					true	"Bearer 用户令牌"
+// @Param		id				query		string					true	"id"
+// @Param		body			body		models.SrsHook	true	"models.SrsHook"
+// @Success	200 "成功"
+// @Failure	400				{object}	string					"请求错误"
+// @Failure	401				{object}	string					"token验证失败"
+// @Failure	500				{object}	string					"内部错误"
+// @Router		/api/srshooks/dvrs [post]
+func Dvrs(c *gin.Context) {
+	model := &models.SrsHook{}
+	err := c.ShouldBindBodyWith(&model, binding.JSON)
+	if err != nil {
+		response.Error(err.Error(), http.StatusBadRequest, c)
+		return
+	}
+	URL, _ := url.Parse(model.Param)
+	args := URL.Query()
+	if token, ok := args[`token`]; ok {
+		event, err := services.Event.GetOneByStream(c, model.Stream)
+		if err != nil {
+			return
+		}
+		if token[0] != event.Token {
+			//鉴权没通过
+			return
+		}
+		services.SrsHook.Log(c, model)
+		responseMap := map[string]any{
+			`code`: 0,
+			`msg`:  `OK`,
+		}
+		response.OK(responseMap, c)
+	}
+
+}
+
+// @Summary	hls
+// @Tags		srs-hooks
+// @Accept		application/json
+// @Produce	application/json
+// @Param		Authorization	header		string					true	"Bearer 用户令牌"
+// @Param		id				query		string					true	"id"
+// @Success	200 "成功"
+// @Failure	400				{object}	string					"请求错误"
+// @Failure	401				{object}	string					"token验证失败"
+// @Failure	500				{object}	string					"内部错误"
+// @Router		/api/srshooks/hls [post]
+func Hls(c *gin.Context) {
+	model := &models.SrsHook{}
+	err := c.ShouldBindBodyWith(&model, binding.JSON)
+	if err != nil {
+		response.Error(err.Error(), http.StatusBadRequest, c)
+		return
+	}
+	URL, _ := url.Parse(model.Param)
+	args := URL.Query()
+	if token, ok := args[`token`]; ok {
+		event, err := services.Event.GetOneByStream(c, model.Stream)
+		if err != nil {
+			return
+		}
+		if token[0] != event.Token {
+			//鉴权没通过
+			return
+		}
+		services.SrsHook.Log(c, model)
+		responseMap := map[string]any{
+			`code`: 0,
+			`msg`:  `OK`,
+		}
+		response.OK(responseMap, c)
+	}
+
+}
+
+// @Summary	hls/:app/:stream/:ts_url:param
+// @Tags		srs-hooks
+// @Accept		application/json
+// @Produce	application/json
+// @Param		Authorization	header		string					true	"Bearer 用户令牌"
+// @Param		id				query		string					true	"id"
+// @Success	200 "成功"
+// @Failure	400				{object}	string					"请求错误"
+// @Failure	401				{object}	string					"token验证失败"
+// @Failure	500				{object}	string					"内部错误"
+// @Router		/api/srshooks/hls/:app/:stream/:ts_url:param [get]
+func HlsMore(c *gin.Context) {
+	model := &models.SrsHook{}
+	err := c.ShouldBindBodyWith(&model, binding.JSON)
+	if err != nil {
+		response.Error(err.Error(), http.StatusBadRequest, c)
+		return
+	}
+	URL, _ := url.Parse(model.Param)
+	args := URL.Query()
+	if token, ok := args[`token`]; ok {
+		event, err := services.Event.GetOneByStream(c, model.Stream)
+		if err != nil {
+			return
+		}
+		if token[0] != event.Token {
+			//鉴权没通过
+			return
+		}
+		services.SrsHook.Log(c, model)
+		responseMap := map[string]any{
+			`code`: 0,
+			`msg`:  `OK`,
+		}
+		response.OK(responseMap, c)
+	}
+
 }

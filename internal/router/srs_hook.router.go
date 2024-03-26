@@ -28,6 +28,12 @@ func SrsHookRouters(e *gin.Engine) {
 	}
 	_srshooks := api.Group("/srshooks")
 	{
-		_srshooks.POST(`/streams/publish`, controllers.StreamPublish)
+		_srshooks.POST(`/streams/publish`, controllers.StreamPublish)      //推流，发起直播
+		_srshooks.POST("/streams/unpublish", controllers.StreamsUnPublish) //结束直播
+		_srshooks.POST("/sessions/play", controllers.SessionsPlay)         //开始观看
+		_srshooks.POST("/sessions/stop", controllers.SessionsStop)         //停止观看
+		_srshooks.POST("/dvrs", controllers.Dvrs)                          //录制
+		_srshooks.POST("/hls", controllers.Hls)
+		_srshooks.GET("/hls/*any", controllers.HlsMore)
 	}
 }
